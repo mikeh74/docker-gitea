@@ -7,7 +7,7 @@ some of the functionality which is available within github.
 The benefit of self hosting means that you ensure that repos are protected and
 kept entirely private rather than hosting on the web.
 
-## Docker Compose Setup
+## Docker Compose Setup
 
 The stack in [compose.yaml](/Users/mikehorrocks/Projects/docker/gitea/compose.yaml)
 runs two containers on a dedicated bridge network:
@@ -110,5 +110,3 @@ Once running, open http://localhost:3000. Clone over SSH with
 - `gitea-data/` holds SSH host keys and the JWT private key, and `mysql-data/`
   holds MySQL key and certificate files. Keep these out of version control.
 - Port 3000 and 2222 are published on all host interfaces.
-
-
