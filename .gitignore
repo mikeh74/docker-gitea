@@ -1,4 +1,6 @@
-.env
+secrets/*
+!secrets/.gitkeep
+!secrets/README.md
 gitea-data
 gitea-config
 mysql-data

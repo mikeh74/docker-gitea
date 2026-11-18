@@ -64,21 +64,26 @@ be writable by that user.
 ### Database
 
 `db` uses `mysql:8.4` with the database and user `gitea`. The root and user
-passwords come from `.env` (see `MYSQL_*` in `compose.yaml`). It has a healthcheck
+passwords come from Docker secrets in the `secrets/` folder. It has a healthcheck
 (`mysqladmin ping`, every 10s), and the `gitea` service waits for it to report
 healthy before starting.
 
 ### Configuration secrets
 
-Passwords are read from `.env`, which Docker Compose loads automatically. It is
-git-ignored. To set up a new environment:
+Passwords are stored as Docker secrets in the `secrets/` folder. Docker Compose mounts them into containers as files at `/run/secrets/`, so they never appear as environment variables or in `docker inspect` output.
+
+To set up a new environment:
 
 ```bash
-cp .env.example .env
-# edit .env and replace every change-me-* value
+echo "your-mysql-root-password" > secrets/db_root_password
+echo "your-mysql-gitea-password" > secrets/db_password
+echo "your-mysql-gitea-password" > secrets/gitea_db_password
+chmod 600 secrets/*
 ```
 
-Compose refuses to start if a required variable is missing from `.env`.
+The `db_password` and `gitea_db_password` must match—both are used for Gitea to authenticate to MySQL.
+
+See [secrets/README.md](/Users/mikehorrocks/Projects/docker/gitea/secrets/README.md) for more details.
 
 ### Running
 
@@ -98,10 +103,10 @@ Once running, open http://localhost:3000. Clone over SSH with
 
 ### Security notes
 
-- Keep `.env` out of version control (already git-ignored). Use strong,
-  unique passwords. If you change `MYSQL_PASSWORD` or `GITEA_DB_PASSWORD`
-  after the database is initialised, the values in `.env` must be updated
-  to match the database itself.
+- Keep `secrets/` files out of version control (they are git-ignored).
+  Use strong, unique passwords. Set permissions to `600` so only the owner can read them.
+- If you need to rotate passwords after the database is initialised, update the secret
+  files and restart the stack. The database passwords themselves must be changed in MySQL.
 - `gitea-data/` holds SSH host keys and the JWT private key, and `mysql-data/`
   holds MySQL key and certificate files. Keep these out of version control.
 - Port 3000 and 2222 are published on all host interfaces.
