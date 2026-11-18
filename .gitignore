@@ -1,0 +1,4 @@
+.env
+gitea-data
+gitea-config
+mysql-data
